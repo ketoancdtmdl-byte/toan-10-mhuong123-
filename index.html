@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH 10 NEXUS | Khám Phá Toán Lớp 10 Tương Tác Đỉnh Cao</title>
+    <meta name="description" content="Nền tảng học Toán lớp 10 tương tác trực quan: Mô phỏng đồ thị Parabol, Giải tam giác, Tập hợp, Flashcard 3D và Trắc nghiệm thông minh chuẩn GDPT 2018.">
+    
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .math-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* 3D Flip Card */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Custom Range Slider */
+        input[type=range] {
+            accent-color: #4f46e5;
+        }
+        /* Pulse Glow Effect */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.45); }
+            50% { box-shadow: 0 0 0 12px rgba(79, 70, 229, 0); }
+        }
+        .btn-glow {
+            animation: pulse-glow 2.2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- STICKY HEADER & GAMIFICATION PROGRESS BAR -->
+    <header class="sticky top-0 z-50 glass-card shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-compass-drafting text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">MATH 10 NEXUS</span>
+                    <span class="hidden sm:inline-block ml-1.5 text-[11px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">GDPT 2018</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                <a href="#parabol-lab" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Đồ Thị Parabol</a>
+                <a href="#multi-tools" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Phòng Máy Tính</a>
+                <a href="#flip-cards" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Bí Kíp Lật Mở</a>
+                <a href="#knowledge-hub" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Kho Công Thức</a>
+                <a href="#quiz-arena" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Đấu Trường</a>
+            </nav>
+
+            <!-- XP Mastery Bar & Actions -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <i class="fa-solid fa-bolt text-amber-500"></i>
+                    <div class="text-xs font-bold">
+                        <span id="xp-counter" class="text-indigo-600 dark:text-indigo-400">20</span>/100 XP
+                    </div>
+                    <div class="w-20 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div id="xp-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-500 transition-all duration-500" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <!-- Daily Mystery Gift Button -->
+                <button onclick="openDailyGift()" title="Mở Hộp Quà Toán Học Mỗi Ngày" class="relative p-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 transition">
+                    <i class="fa-solid fa-gift text-base animate-bounce"></i>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button onclick="toggleDarkMode()" title="Đổi giao diện Sáng/Tối" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION & INTERACTIVE PARABOLA LAB (FEATURE 1) -->
+    <section id="parabol-lab" class="relative pt-8 pb-16 overflow-hidden">
+        <!-- Decorative Background Blobs -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/3 -right-24 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Left Column: Hero Pitch + Real-time Controls -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-200 dark:border-indigo-800">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+                        TRẠM TƯƠNG TÁC TOÁN 10 THỜI GIAN THỰC
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Chạm Tay Vào <br>
+                        <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-500 bg-clip-text text-transparent">Vẻ Đẹp Toán Học 10</span>
+                    </h1>
+
+                    <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">
+                        Không còn học vẹt công thức! Hãy kéo thử các thanh trượt bên dưới để điều khiển trực tiếp <strong>Đồ thị Parabol</strong> <span class="math-font text-indigo-600 dark:text-indigo-400 font-bold">y = ax² + bx + c</span> và quan sát sự biến thiên ngay lập tức.
+                    </p>
+
+                    <!-- Interactive Sliders Box -->
+                    <div class="glass-card p-5 rounded-2xl shadow-lg space-y-4 border-l-4 border-l-indigo-600">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Phương trình đang khảo sát:</span>
+                            <span id="live-equation" class="math-font text-base sm:text-lg font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/70 px-3 py-1 rounded-lg">y = 1x² - 2x - 3</span>
+                        </div>
+
+                        <!-- Slider a -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Hệ số <strong class="math-font text-indigo-600">a</strong> (Độ mở & Bề lõm):</span>
+                                <span id="val-a" class="math-font font-bold text-indigo-600">1.0</span>
+                            </div>
+                            <input id="slider-a" type="range" min="-3" max="3" step="0.5" value="1" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="updateParabola()">
+                        </div>
+
+                        <!-- Slider b -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Hệ số <strong class="math-font text-purple-600">b</strong> (Dịch chuyển đỉnh):</span>
+                                <span id="val-b" class="math-font font-bold text-purple-600">-2.0</span>
+                            </div>
+                            <input id="slider-b" type="range" min="-6" max="6" step="0.5" value="-2" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="updateParabola()">
+                        </div>
+
+                        <!-- Slider c -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Hệ số <strong class="math-font text-emerald-600">c</strong> (Giao điểm trục tung Oy):</span>
+                                <span id="val-c" class="math-font font-bold text-emerald-600">-3.0</span>
+                            </div>
+                            <input id="slider-c" type="range" min="-5" max="5" step="0.5" value="-3" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="updateParabola()">
+                        </div>
+
+                        <!-- Preset Scenarios -->
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700/70 flex flex-wrap gap-2">
+                            <span class="text-xs font-semibold text-slate-500 self-center mr-1">Mẫu thực tế:</span>
+                            <button onclick="setParabolaPreset(-0.5, 2, 2)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 transition">
+                                <i class="fa-solid fa-basketball mr-1"></i>Ném bóng rổ
+                            </button>
+                            <button onclick="setParabolaPreset(1, 0, -4)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 transition">
+                                <i class="fa-solid fa-scale-balanced mr-1"></i>Đối xứng qua Oy
+                            </button>
+                            <button onclick="setParabolaPreset(1, -4, 4)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 transition">
+                                <i class="fa-solid fa-bullseye mr-1"></i>Tiếp xúc trục Ox (Δ=0)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Live Canvas Graph & Telemetry Bento Cards -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="glass-card p-4 sm:p-6 rounded-3xl shadow-xl border border-indigo-100 dark:border-slate-800">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-bold text-slate-500 ml-1">MẶT PHẲNG TỌA ĐỘ OXY TRỰC QUAN</span>
+                            </div>
+                            <span id="concavity-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                                a > 0: Bề lõm quay lên trên
+                            </span>
+                        </div>
+
+                        <!-- HTML5 Canvas -->
+                        <div class="relative w-full bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                            <canvas id="parabolaCanvas" width="650" height="360" class="w-full h-[300px] sm:h-[340px] block"></canvas>
+                        </div>
+
+                        <!-- Live Telemetry Bento Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                            <div class="p-3 rounded-xl bg-indigo-50/80 dark:bg-slate-800/90 border border-indigo-100 dark:border-slate-700">
+                                <div class="text-[11px] font-bold uppercase text-slate-400">Đỉnh Parabol I</div>
+                                <div id="stat-vertex" class="math-font text-sm sm:text-base font-extrabold text-indigo-600 dark:text-indigo-400 mt-0.5">I(1; -4)</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-purple-50/80 dark:bg-slate-800/90 border border-purple-100 dark:border-slate-700">
+                                <div class="text-[11px] font-bold uppercase text-slate-400">Trục đối xứng</div>
+                                <div id="stat-axis" class="math-font text-sm sm:text-base font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">x = 1</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-amber-50/80 dark:bg-slate-800/90 border border-amber-100 dark:border-slate-700">
+                                <div class="text-[11px] font-bold uppercase text-slate-400">Biệt thức Δ</div>
+                                <div id="stat-delta" class="math-font text-sm sm:text-base font-extrabold text-amber-600 dark:text-amber-400 mt-0.5">Δ = 16</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-emerald-50/80 dark:bg-slate-800/90 border border-emerald-100 dark:border-slate-700">
+                                <div class="text-[11px] font-bold uppercase text-slate-400">Giao điểm Ox</div>
+                                <div id="stat-roots" class="math-font text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">x₁=-1; x₂=3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MULTI-TOOL SIMULATOR SECTION (FEATURE 2) -->
+    <section id="multi-tools" class="py-14 bg-white dark:bg-slate-900/60 border-y border-slate-200/80 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-xs font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">CÔNG CỤ GIẢI TOÁN THÔNG MINH</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold mt-2">Phòng Thí Nghiệm Toán 10 Đa Năng</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">Nhập số liệu bài toán của bạn để xem phân tích từng bước: từ xét dấu tam thức bậc hai, giải tam giác hình học đến phép toán tập hợp.</p>
+            </div>
+
+            <!-- Tool Tabs Navigation -->
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8">
+                <button onclick="switchToolTab('tab-quadratic')" id="btn-tab-quadratic" class="px-5 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-indigo-600 text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-square-root-variable"></i> 1. Xét Dấu Tam Thức Bậc Hai
+                </button>
+                <button onclick="switchToolTab('tab-triangle')" id="btn-tab-triangle" class="px-5 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50">
+                    <i class="fa-solid fa-draw-polygon"></i> 2. Giải Tam Giác (Cosin & Heron)
+                </button>
+                <button onclick="switchToolTab('tab-sets')" id="btn-tab-sets" class="px-5 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50">
+                    <i class="fa-solid fa-circle-nodes"></i> 3. Phòng Thí Nghiệm Tập Hợp
+                </button>
+            </div>
+
+            <!-- TAB 1: QUADRATIC SIGN TABLE ANALYZER -->
+            <div id="tab-quadratic" class="tool-panel glass-card p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-800">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="text-xl font-extrabold flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i>
+                            Biện Luận & Xét Dấu <span class="math-font text-indigo-600">f(x) = ax² + bx + c</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Áp dụng định lý về dấu của tam thức bậc hai: <em>"Trong trái, ngoài cùng"</em> khi Δ > 0.</p>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Hệ số a (≠0)</label>
+                                <input id="q-a" type="number" step="any" value="1" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Hệ số b</label>
+                                <input id="q-b" type="number" step="any" value="-5" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Hệ số c</label>
+                                <input id="q-c" type="number" step="any" value="6" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                        </div>
+
+                        <button onclick="solveQuadraticTool()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> Phân Tích & Lập Bảng Xét Dấu
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-7">
+                        <div id="quadratic-output" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TRIANGLE SOLVER (HERON, COSINE, R, r) -->
+            <div id="tab-triangle" class="tool-panel hidden glass-card p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-800">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="text-xl font-extrabold flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-emerald-600"></i>
+                            Giải Tam Giác Từ 3 Cạnh <span class="math-font text-emerald-600">(a, b, c)</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Tự động kiểm tra bất đẳng thức tam giác, tính 3 góc bằng <strong>Định lý Cosin</strong>, diện tích bằng <strong>Công thức Heron</strong> và bán kính <span class="math-font">R, r</span>.</p>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Cạnh a (BC)</label>
+                                <input id="tri-a" type="number" step="any" value="5" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Cạnh b (AC)</label>
+                                <input id="tri-b" type="number" step="any" value="6" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Cạnh c (AB)</label>
+                                <input id="tri-c" type="number" step="any" value="7" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold text-center">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="setTrianglePreset(3,4,5)" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">Tam giác vuông (3-4-5)</button>
+                            <button onclick="setTrianglePreset(6,6,6)" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300">Tam giác đều (6-6-6)</button>
+                        </div>
+
+                        <button onclick="solveTriangleTool()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-ruler-combined"></i> Giải Tam Giác Ngay
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-7">
+                        <div id="triangle-output" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SET OPERATIONS LAB -->
+            <div id="tab-sets" class="tool-panel hidden glass-card p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-800">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="text-xl font-extrabold flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-500"></i>
+                            Phép Toán Tập Hợp <span class="math-font text-amber-600">(A ∩ B, A ∪ B, A \ B)</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Nhập các phần tử cách nhau bởi dấu phẩy để tìm Giao, Hợp, Hiệu và phần bù của hai tập hợp.</p>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Tập hợp A (cách nhau bằng dấu phẩy)</label>
+                            <input id="set-a" type="text" value="1, 2, 3, 5, 8, 13" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Tập hợp B (cách nhau bằng dấu phẩy)</label>
+                            <input id="set-b" type="text" value="2, 4, 5, 6, 8, 10" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 math-font font-bold">
+                        </div>
+
+                        <button onclick="solveSetsTool()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> Thực Hiện Phép Toán Tập Hợp
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-7">
+                        <div id="sets-output" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D FLIP CARDS CURIOSITY ENGINE (FEATURE 3A) -->
+    <section id="flip-cards" class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-400">GAMIFICATION & GÂY TÒ MÒ</span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold mt-1">Thẻ Lật 3D: Giải Mã Bẫy & Bí Kíp Toán 10</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm sm:text-base">Bấm vào từng thẻ bí mật để lật mở công thức giải nhanh và nhận <strong>+15 XP</strong> tiến trình khám phá!</p>
+                </div>
+                <button onclick="resetFlipCards()" class="self-start md:self-auto px-4 py-2 rounded-xl bg-slate-200/80 dark:bg-slate-800 text-xs font-bold hover:bg-slate-300 transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Úp lại toàn bộ thẻ
+                </button>
+            </div>
+
+            <div id="flip-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SMART KNOWLEDGE HUB WITH LIVE FILTER & INSTANT SEARCH (FEATURE 4) -->
+    <section id="knowledge-hub" class="py-16 bg-slate-100/80 dark:bg-slate-900/50 border-y border-slate-200/80 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">TRA CỨU TỨC THÌ 0 ĐỘ TRỄ</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold mt-1">Kho Tàng Công Thức Trọng Tâm Toán 10</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">Tìm kiếm theo tên định lý, công thức hoặc lọc theo từng chương chuẩn Chương trình GDPT 2018.</p>
+            </div>
+
+            <!-- Search & Category Filter Bar -->
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input id="formula-search" type="text" oninput="renderFormulas()" placeholder="Tìm nhanh: Cosin, Vectơ, Elip, Tam thức..." class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-center">
+                    <button onclick="setFormulaFilter('all')" id="filter-all" class="formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow">Tất cả (12)</button>
+                    <button onclick="setFormulaFilter('Đại số')" id="filter-Đại số" class="formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Đại số & Hàm số</button>
+                    <button onclick="setFormulaFilter('Hình học')" id="filter-Hình học" class="formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Hình học & Oxy</button>
+                    <button onclick="setFormulaFilter('Thống kê & Xác suất')" id="filter-Thống kê & Xác suất" class="formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Thống kê & Xác suất</button>
+                    <button onclick="setFormulaFilter('saved')" id="filter-saved" class="formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                        <i class="fa-solid fa-bookmark mr-1"></i>Đã lưu (<span id="saved-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formula Bento Grid -->
+            <div id="formula-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE QUIZ ARENA (FEATURE 3B) -->
+    <section id="quiz-arena" class="py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl shadow-2xl border-2 border-indigo-500/20">
+                <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">CHẨN ĐOÁN NĂNG LỰC TOÁN 10</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Đấu Trường Tư Duy Tốc Độ</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-sm">
+                            Điểm: <span id="quiz-score" class="math-font text-lg">0</span>/5
+                        </div>
+                        <button onclick="restartQuiz()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">
+                            <i class="fa-solid fa-rotate mr-1"></i>Làm lại
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Container -->
+                <div id="quiz-container" class="mt-6 space-y-6">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL FOR DAILY MATH MYSTERY GIFT -->
+    <div id="gift-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+        <div class="glass-card max-w-md w-full p-6 sm:p-8 rounded-3xl shadow-2xl border border-amber-300 dark:border-amber-700 text-center space-y-4 animate-fade-in">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center text-3xl shadow-lg">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">HỘP QUÀ BÍ MẬT TOÁN HỌC HÔM NAY</span>
+            <h3 id="gift-title" class="text-xl font-extrabold">Quy Tắc "Nhất Thanh Nhì Sắc"</h3>
+            <p id="gift-content" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+            <div class="pt-2">
+                <button onclick="closeDailyGift()" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold shadow-md">
+                    Tuyệt vời! (+10 XP Khám Phá)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900 text-white text-sm font-semibold shadow-xl border border-slate-700">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Đã lưu công thức!</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-compass-drafting text-indigo-400"></i>
+                <span class="font-bold text-white">MATH 10 NEXUS</span>
+                <span>— Không gian học Toán lớp 10 tương tác trực quan.</span>
+            </div>
+            <div>Thiết kế chuẩn SEO & Responsive 100% cho GitHub Pages.</div>
+        </div>
+    </footer>
+
+    <!-- COMPLETE INTERACTIVE JAVASCRIPT ENGINE -->
+    <script>
+        // ==========================================
+        // 1. GAMIFICATION & XP SYSTEM
+        // ==========================================
+        let userXP = 20;
+        const unlockedActions = new Set();
+
+        function addXP(amount, actionKey, message) {
+            if (actionKey && unlockedActions.has(actionKey)) return;
+            if (actionKey) unlockedActions.add(actionKey);
+            userXP = Math.min(100, userXP + amount);
+            document.getElementById('xp-counter').innerText = userXP;
+            document.getElementById('xp-bar').style.width = userXP + '%';
+            if (message) showToast(`${message} (+${amount} XP)`);
+            if (userXP === 100) {
+                triggerConfetti();
+                showToast("Chúc mừng! Bạn đã đạt 100/100 XP Bậc Thầy Toán 10!");
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2800);
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            icon.className = html.classList.contains('dark') ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
+            updateParabola();
+        }
+
+        // ==========================================
+        // 2. HERO INTERACTIVE PARABOLA LAB (CANVAS)
+        // ==========================================
+        function setParabolaPreset(a, b, c) {
+            document.getElementById('slider-a').value = a;
+            document.getElementById('slider-b').value = b;
+            document.getElementById('slider-c').value = c;
+            updateParabola();
+            addXP(5, `preset_${a}_${b}_${c}`, "Đã thử mô hình Parabol thực tế");
+        }
+
+        function updateParabola() {
+            let a = parseFloat(document.getElementById('slider-a').value);
+            const b = parseFloat(document.getElementById('slider-b').value);
+            const c = parseFloat(document.getElementById('slider-c').value);
+
+            // Prevent a = 0 for parabola
+            if (a === 0) a = 0.5;
+
+            document.getElementById('val-a').innerText = a.toFixed(1);
+            document.getElementById('val-b').innerText = b.toFixed(1);
+            document.getElementById('val-c').innerText = c.toFixed(1);
+
+            const bSign = b >= 0 ? `+ ${b}` : `- ${Math.abs(b)}`;
+            const cSign = c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+            document.getElementById('live-equation').innerText = `y = ${a}x² ${bSign}x ${cSign}`;
+
+            const badge = document.getElementById('concavity-badge');
+            if (a > 0) {
+                badge.innerText = "a > 0: Bề lõm hướng lên (Có GTNN)";
+                badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300";
+            } else {
+                badge.innerText = "a < 0: Bề lõm hướng xuống (Có GTLN)";
+                badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300";
+            }
+
+            // Vertex & Delta calculations
+            const xv = -b / (2 * a);
+            const delta = b * b - 4 * a * c;
+            const yv = -delta / (4 * a);
+
+            document.getElementById('stat-vertex').innerText = `I(${xv.toFixed(1)}; ${yv.toFixed(1)})`;
+            document.getElementById('stat-axis').innerText = `x = ${xv.toFixed(2)}`;
+            document.getElementById('stat-delta').innerText = `Δ = ${delta.toFixed(1)}`;
+
+            let rootsText = "Vô nghiệm";
+            if (delta > 0) {
+                const x1 = (-b - Math.sqrt(delta)) / (2 * a);
+                const x2 = (-b + Math.sqrt(delta)) / (2 * a);
+                rootsText = `x₁=${x1.toFixed(1)}; x₂=${x2.toFixed(1)}`;
+            } else if (delta === 0) {
+                rootsText = `x = ${xv.toFixed(1)}`;
+            }
+            document.getElementById('stat-roots').innerText = rootsText;
+
+            drawParabolaCanvas(a, b, c, xv, yv);
+        }
+
+        function drawParabolaCanvas(a, b, c, xv, yv) {
+            const canvas = document.getElementById('parabolaCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const isDark = document.documentElement.classList.contains('dark');
+
+            ctx.clearRect(0, 0, w, h);
+
+            const originX = w / 2;
+            const originY = h / 2;
+            const scale = 28; // pixels per unit
+
+            // Grid lines
+            ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(148, 163, 184, 0.25)';
+            ctx.lineWidth = 1;
+            for (let x = originX % scale; x < w; x += scale) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = originY % scale; y < h; y += scale) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            // Axes Ox & Oy
+            ctx.strokeStyle = isDark ? '#94a3b8' : '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(w, originY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, h); ctx.stroke();
+
+            // Axis of Symmetry dashed line
+            const symX = originX + xv * scale;
+            ctx.save();
+            ctx.setLineDash([6, 5]);
+            ctx.strokeStyle = '#a855f7';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(symX, 0); ctx.lineTo(symX, h); ctx.stroke();
+            ctx.restore();
+
+            // Draw Parabola Curve
+            ctx.strokeStyle = '#4f46e5';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            let first = true;
+            for (let px = 0; px <= w; px += 2) {
+                const x = (px - originX) / scale;
+                const y = a * x * x + b * x + c;
+                const py = originY - y * scale;
+                if (first) {
+                    ctx.moveTo(px, py);
+                    first = false;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+
+            // Highlight Vertex I
+            const vPx = originX + xv * scale;
+            const vPy = originY - yv * scale;
+            if (vPy >= -20 && vPy <= h + 20) {
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.arc(vPx, vPy, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = isDark ? '#f8fafc' : '#1e293b';
+                ctx.font = 'bold 12px "JetBrains Mono"';
+                ctx.fillText(`I(${xv.toFixed(1)}, ${yv.toFixed(1)})`, vPx + 10, vPy - 8);
+            }
+        }
+
+        // ==========================================
+        // 3. MULTI-TOOL SIMULATORS (3 TABS)
+        // ==========================================
+        function switchToolTab(tabId) {
+            document.querySelectorAll('.tool-panel').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            const tabs = ['tab-quadratic', 'tab-triangle', 'tab-sets'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('btn-' + t);
+                if (t === tabId) {
+                    btn.className = "px-5 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-indigo-600 text-white shadow-lg shadow-indigo-500/30";
+                } else {
+                    btn.className = "px-5 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50";
+                }
+            });
+        }
+
+        // Tool 1: Quadratic Sign Analyzer
+        function solveQuadraticTool() {
+            const a = parseFloat(document.getElementById('q-a').value);
+            const b = parseFloat(document.getElementById('q-b').value);
+            const c = parseFloat(document.getElementById('q-c').value);
+            const out = document.getElementById('quadratic-output');
+
+            if (isNaN(a) || a === 0) {
+                out.innerHTML = `<div class="text-rose-600 font-bold">Hệ số a phải khác 0 để là tam thức bậc hai!</div>`;
+                return;
+            }
+
+            const delta = b * b - 4 * a * c;
+            const signA = a > 0 ? '+' : '-';
+            const oppSignA = a > 0 ? '-' : '+';
+            let html = `<div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-700">
+                <span class="font-bold text-sm">Biệt thức <span class="math-font text-indigo-600">Δ = b² - 4ac = ${delta.toFixed(2)}</span></span>
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">Hệ số a = ${a} (${a > 0 ? 'Dương' : 'Âm'})</span>
+            </div>`;
+
+            if (delta < 0) {
+                html += `<div class="text-sm leading-relaxed space-y-2">
+                    <p><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Vì <strong>Δ < 0</strong> nên phương trình vô nghiệm.</p>
+                    <p class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 font-semibold">
+                        Kết luận dấu: Tam thức <span class="math-font">f(x)</span> luôn cùng dấu với hệ số a (tức là <strong>f(x) ${a > 0 ? '> 0' : '< 0'}</strong>) với mọi <span class="math-font">x ∈ ℝ</span>.
+                    </p>
+                </div>`;
+            } else if (delta === 0) {
+                const x0 = (-b / (2 * a)).toFixed(2);
+                html += `<div class="text-sm leading-relaxed space-y-2">
+                    <p><i class="fa-solid fa-check-circle text-amber-500 mr-1"></i> Vì <strong>Δ = 0</strong> nên tam thức có nghiệm kép <span class="math-font font-bold">x₀ = ${x0}</span>.</p>
+                    <p class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 font-semibold">
+                        Kết luận dấu: <span class="math-font">f(x) ${a > 0 ? '> 0' : '< 0'}</span> với mọi <span class="math-font">x ≠ ${x0}</span> và <span class="math-font">f(${x0}) = 0</span>.
+                    </p>
+                </div>`;
+            } else {
+                let r1 = (-b - Math.sqrt(delta)) / (2 * a);
+                let r2 = (-b + Math.sqrt(delta)) / (2 * a);
+                if (r1 > r2) [r1, r2] = [r2, r1];
+                html += `<div class="text-sm space-y-3">
+                    <p><i class="fa-solid fa-check-circle text-indigo-500 mr-1"></i> Vì <strong>Δ > 0</strong> nên tam thức có 2 nghiệm phân biệt: <strong class="math-font text-indigo-600">x₁ = ${r1.toFixed(2)}</strong> và <strong class="math-font text-indigo-600">x₂ = ${r2.toFixed(2)}</strong>.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center math-font text-xs sm:text-sm border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden">
+                            <tr class="bg-slate-200/70 dark:bg-slate-800 font-bold">
+                                <td class="p-2 border-r border-slate-300 dark:border-slate-700">x</td>
+                                <td class="p-2">-∞</td>
+                                <td class="p-2"></td>
+                                <td class="p-2 text-indigo-600">${r1.toFixed(2)}</td>
+                                <td class="p-2"></td>
+                                <td class="p-2 text-indigo-600">${r2.toFixed(2)}</td>
+                                <td class="p-2"></td>
+                                <td class="p-2">+∞</td>
+                            </tr>
+                            <tr class="bg-white dark:bg-slate-900 font-bold">
+                                <td class="p-2 border-r border-slate-300 dark:border-slate-700">f(x)</td>
+                                <td class="p-2"></td>
+                                <td class="p-2 text-lg text-emerald-600">${signA}</td>
+                                <td class="p-2">0</td>
+                                <td class="p-2 text-lg text-rose-500">${oppSignA}</td>
+                                <td class="p-2">0</td>
+                                <td class="p-2 text-lg text-emerald-600">${signA}</td>
+                                <td class="p-2"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-500 italic">Quy tắc vàng: "Trong khoảng hai nghiệm (${r1.toFixed(2)}; ${r2.toFixed(2)}) trái dấu a (${oppSignA}), ngoài khoảng hai nghiệm cùng dấu a (${signA})".</p>
+                </div>`;
+            }
+            out.innerHTML = html;
+            addXP(10, 'tool_quadratic', 'Đã sử dụng Máy xét dấu Tam thức bậc hai');
+        }
+
+        // Tool 2: Triangle Solver
+        function setTrianglePreset(a, b, c) {
+            document.getElementById('tri-a').value = a;
+            document.getElementById('tri-b').value = b;
+            document.getElementById('tri-c').value = c;
+            solveTriangleTool();
+        }
+
+        function solveTriangleTool() {
+            const a = parseFloat(document.getElementById('tri-a').value);
+            const b = parseFloat(document.getElementById('tri-b').value);
+            const c = parseFloat(document.getElementById('tri-c').value);
+            const out = document.getElementById('triangle-output');
+
+            if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0 || (a + b <= c) || (a + c <= b) || (b + c <= a)) {
+                out.innerHTML = `<div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 font-bold text-sm">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Bộ 3 cạnh (${a}, ${b}, ${c}) không thỏa mãn bất đẳng thức tam giác (Tổng 2 cạnh phải lớn hơn cạnh còn lại)!
+                </div>`;
+                return;
+            }
+
+            const p = (a + b + c) / 2;
+            const S = Math.sqrt(p * (p - a) * (p - b) * (p - c));
+            const R = (a * b * c) / (4 * S);
+            const r = S / p;
+
+            const cosA = (b * b + c * c - a * a) / (2 * b * c);
+            const cosB = (a * a + c * c - b * b) / (2 * a * c);
+            const A = (Math.acos(Math.min(1, Math.max(-1, cosA))) * 180 / Math.PI);
+            const B = (Math.acos(Math.min(1, Math.max(-1, cosB))) * 180 / Math.PI);
+            const C = 180 - A - B;
+
+            out.innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Nửa chu vi (p)</span>
+                        <div class="math-font text-base font-extrabold text-emerald-600 mt-0.5">p = ${p.toFixed(2)}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Diện tích Heron (S)</span>
+                        <div class="math-font text-base font-extrabold text-emerald-600 mt-0.5">S = ${S.toFixed(2)}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Bán kính R & r</span>
+                        <div class="math-font text-xs font-extrabold text-indigo-600 mt-1">R=${R.toFixed(2)} | r=${r.toFixed(2)}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-indigo-50/70 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Góc A (Định lý Cosin)</span>
+                        <div class="math-font text-base font-extrabold text-indigo-600 mt-0.5">${A.toFixed(1)}°</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-indigo-50/70 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Góc B</span>
+                        <div class="math-font text-base font-extrabold text-indigo-600 mt-0.5">${B.toFixed(1)}°</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-indigo-50/70 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700">
+                        <span class="text-[11px] font-bold uppercase text-slate-400">Góc C</span>
+                        <div class="math-font text-base font-extrabold text-indigo-600 mt-0.5">${C.toFixed(1)}°</div>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500">
+                    <strong>Công thức áp dụng:</strong> <span class="math-font">S = √[p(p-a)(p-b)(p-c)]</span>; <span class="math-font">cosA = (b²+c²-a²)/(2bc)</span>; <span class="math-font">R = abc/(4S)</span>.
+                </div>
+            `;
+            addXP(10, 'tool_triangle', 'Đã giải tam giác bằng Định lý Cosin & Heron');
+        }
+
+        // Tool 3: Sets Calculator
+        function solveSetsTool() {
+            const rawA = document.getElementById('set-a').value.split(',').map(s => s.trim()).filter(Boolean);
+            const rawB = document.getElementById('set-b').value.split(',').map(s => s.trim()).filter(Boolean);
+            const setA = [...new Set(rawA)];
+            const setB = [...new Set(rawB)];
+
+            const inter = setA.filter(x => setB.includes(x));
+            const union = [...new Set([...setA, ...setB])];
+            const diffAB = setA.filter(x => !setB.includes(x));
+            const diffBA = setB.filter(x => !setA.includes(x));
+
+            const fmt = arr => arr.length ? `{ ${arr.join(', ')} }` : '∅ (Tập rỗng)';
+
+            document.getElementById('sets-output').innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-bold text-indigo-600 uppercase">Giao của A và B (A ∩ B)</div>
+                        <div class="math-font font-bold mt-1">${fmt(inter)}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Các phần tử thuộc cả A và B</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-bold text-emerald-600 uppercase">Hợp của A và B (A ∪ B)</div>
+                        <div class="math-font font-bold mt-1">${fmt(union)}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Tổng số phần tử: n(A ∪ B) = ${union.length}</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-bold text-amber-600 uppercase">Hiệu A \\ B</div>
+                        <div class="math-font font-bold mt-1">${fmt(diffAB)}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Thuộc A nhưng không thuộc B</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-bold text-purple-600 uppercase">Hiệu B \\ A</div>
+                        <div class="math-font font-bold mt-1">${fmt(diffBA)}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Thuộc B nhưng không thuộc A</div>
+                    </div>
+                </div>
+            `;
+            addXP(10, 'tool_sets', 'Đã thực hiện phép toán Tập hợp');
+        }
+
+        // ==========================================
+        // 4. 3D FLIP CARDS CURIOSITY ENGINE
+        // ==========================================
+        const flipCardsData = [
+            {
+                id: 1,
+                tag: "Bẫy Mệnh Đề",
+                question: "Phủ định của mệnh đề '∀x ∈ ℝ, x² > 0' là gì?",
+                answer: "∃x ∈ ℝ, x² ≤ 0",
+                tip: "Cẩn thận bẫy! Phủ định của 'Với mọi (∀)' là 'Tồn tại (∃)', và phủ định của '>' phải là '≤' (nhiều bạn quên dấu bằng!)."
+            },
+            {
+                id: 2,
+                tag: "Mẹo Nhẩm Nhanh",
+                question: "Làm sao nhẩm nghiệm phương trình ax² + bx + c = 0 trong 2 giây?",
+                answer: "a + b + c = 0 ⇒ x₁=1, x₂=c/a\na - b + c = 0 ⇒ x₁=-1, x₂=-c/a",
+                tip: "Ví dụ: 2026x² - 2027x + 1 = 0 có a+b+c = 0 nên có ngay nghiệm x=1 và x=1/2026!"
+            },
+            {
+                id: 3,
+                tag: "Bí Kíp Vectơ",
+                question: "Khi nào hai vectơ a⃗ và b⃗ vuông góc với nhau?",
+                answer: "a⃗ ⊥ b⃗ ⇔ a⃗ · b⃗ = 0\n⇔ x₁x₂ + y₁y₂ = 0",
+                tip: "Tích vô hướng bằng 0 là chìa khóa vàng để chứng minh vuông góc hoặc viết phương trình đường cao trong mặt phẳng Oxy."
+            },
+            {
+                id: 4,
+                tag: "Hệ Thức Lượng",
+                question: "Làm sao nhớ nhanh Định lý Sin mà không nhầm bán kính?",
+                answer: "a/sinA = b/sinB = c/sinC = 2R",
+                tip: "Luôn nhớ là 2R (đường kính đường tròn ngoại tiếp), tuyệt đối không viết nhầm thành R!"
+            },
+            {
+                id: 5,
+                tag: "Tọa Độ Oxy",
+                question: "Đổi nhanh Vectơ chỉ phương u⃗ = (a; b) sang Vectơ pháp tuyến n⃗?",
+                answer: "n⃗ = (-b; a) hoặc n⃗ = (b; -a)",
+                tip: "Quy tắc 3 giây: 'Đảo vị trí, đổi 1 dấu' — áp dụng cực nhanh khi lập phương trình tổng quát đường thẳng!"
+            },
+            {
+                id: 6,
+                tag: "Ba Đường Conic",
+                question: "Sự khác biệt cốt lõi trong phương trình chính tắc của Elip và Hypebol?",
+                answer: "Elip: x²/a² + y²/b² = 1 (c² = a² - b²)\nHypebol: x²/a² - y²/b² = 1 (c² = a² + b²)",
+                tip: "Elip mang dấu CỘNG ở phương trình nhưng dấu TRỪ ở tiêu cự c²; Hypebol thì ngược lại!"
+            }
+        ];
+
+        function renderFlipCards() {
+            const grid = document.getElementById('flip-cards-grid');
+            grid.innerHTML = flipCardsData.map(card => `
+                <div id="fcard-${card.id}" onclick="flipCard(${card.id})" class="perspective-1000 h-64 cursor-pointer group">
+                    <div class="flip-card-inner shadow-md rounded-2xl">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card p-6 flex flex-col justify-between border-2 border-indigo-100 dark:border-slate-800 group-hover:border-indigo-400 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">${card.tag}</span>
+                                <span class="text-xs font-bold text-slate-400"><i class="fa-solid fa-hand-pointer mr-1"></i>Bấm để lật</span>
+                            </div>
+                            <h3 class="text-lg font-extrabold leading-snug text-slate-800 dark:text-slate-100">${card.question}</h3>
+                            <div class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                                <span>Xem đáp án & mẹo nhớ</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 text-white p-6 flex flex-col justify-between shadow-xl">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-200">CÔNG THỨC & MẸO NHỚ NHANH</span>
+                            <div class="math-font text-sm sm:text-base font-bold bg-white/15 p-3 rounded-xl whitespace-pre-line">${card.answer}</div>
+                            <p class="text-xs text-indigo-100 leading-relaxed">${card.tip}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipCard(id) {
+            const el = document.getElementById(`fcard-${id}`);
+            el.classList.toggle('flipped');
+            addXP(15, `flip_${id}`, `Đã mở khóa Bí kíp Toán 10 #${id}`);
+        }
+
+        function resetFlipCards() {
+            document.querySelectorAll('[id^="fcard-"]').forEach(el => el.classList.remove('flipped'));
+        }
+
+        // ==========================================
+        // 5. SMART KNOWLEDGE HUB (FILTER & SEARCH)
+        // ==========================================
+        const formulasData = [
+            { id: 101, category: "Đại số", title: "Công thức Đỉnh & Trục đối xứng Parabol", formula: "I(-b/2a ; -Δ/4a), Trục: x = -b/2a", note: "Hàm số đồng biến trên (-b/2a; +∞) khi a > 0." },
+            { id: 102, category: "Đại số", title: "Định lý Vi-ét cho phương trình bậc hai", formula: "S = x₁ + x₂ = -b/a ; P = x₁x₂ = c/a", note: "Điều kiện có 2 nghiệm dương: Δ ≥ 0, S > 0, P > 0." },
+            { id: 103, category: "Đại số", title: "Dấu của Tam thức bậc hai f(x) = ax² + bx + c", formula: "Δ < 0 ⇒ a·f(x) > 0, ∀x ∈ ℝ", note: "Đề bài yêu cầu f(x) > 0 ∀x ∈ ℝ ⇔ a > 0 và Δ < 0." },
+            { id: 104, category: "Đại số", title: "Quy tắc Đếm: Quy tắc Cộng & Quy tắc Nhân", formula: "Cộng: m + n cách | Nhân: m × n cách", note: "Công việc chia theo phương án độc lập dùng Cộng; chia theo công đoạn liên tiếp dùng Nhân." },
+            { id: 105, category: "Đại số", title: "Nhị thức Newton bậc 4 & bậc 5", formula: "(a+b)⁴ = a⁴ + 4a³b + 6a²b² + 4ab³ + b⁴", note: "Hệ số nhị thức bậc 5: 1 - 5 - 10 - 10 - 5 - 1." },
+            { id: 106, category: "Hình học", title: "Định lý Cosin trong tam giác", formula: "a² = b² + c² - 2bc·cosA", note: "Suy ra góc: cosA = (b² + c² - a²) / (2bc)." },
+            { id: 107, category: "Hình học", title: "Các công thức Diện tích Tam giác", formula: "S = ½bc·sinA = abc/(4R) = p·r", note: "Công thức Heron: S = √[p(p-a)(p-b)(p-c)]." },
+            { id: 108, category: "Hình học", title: "Quy tắc Trung điểm & Trọng tâm Vectơ", formula: "IA⃗ + IB⃗ = 0⃗ | GA⃗ + GB⃗ + GC⃗ = 0⃗", note: "Với điểm M bất kỳ: MA⃗ + MB⃗ + MC⃗ = 3MG⃗." },
+            { id: 109, category: "Hình học", title: "Khoảng cách từ điểm M(x₀; y₀) đến đường thẳng Δ", formula: "d(M, Δ) = |ax₀ + by₀ + c| / √(a² + b²)", note: "Ứng dụng tìm bán kính đường tròn tiếp xúc với đường thẳng." },
+            { id: 110, category: "Hình học", title: "Phương trình Đường tròn tâm I(a; b) bán kính R", formula: "(x - a)² + (y - b)² = R²", note: "Dạng khai triển: x² + y² - 2ax - 2by + c = 0 với R = √(a²+b²-c)." },
+            { id: 111, category: "Thống kê & Xác suất", title: "Phương sai (s²) và Độ lệch chuẩn (s)", formula: "s = √s² = √[ (1/n) ∑(xᵢ - x̄)² ]", note: "Độ lệch chuẩn càng nhỏ thì số liệu càng đồng đều, ít biến động." },
+            { id: 112, category: "Thống kê & Xác suất", title: "Xác suất cổ điển của biến cố A", formula: "P(A) = n(A) / n(Ω)  (0 ≤ P(A) ≤ 1)", note: "Biến cố đối Ā: P(Ā) = 1 - P(A)." }
+        ];
+
+        let currentFormulaFilter = 'all';
+        let savedFormulas = new Set();
+
+        function setFormulaFilter(category) {
+            currentFormulaFilter = category;
+            document.querySelectorAll('.formula-filter-btn').forEach(btn => {
+                btn.className = "formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+            });
+            const activeBtn = document.getElementById('filter-' + category);
+            if (activeBtn) {
+                activeBtn.className = "formula-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow";
+            }
+            renderFormulas();
+        }
+
+        function toggleSaveFormula(id) {
+            if (savedFormulas.has(id)) {
+                savedFormulas.delete(id);
+                showToast("Đã bỏ lưu công thức khỏi sổ tay");
+            } else {
+                savedFormulas.add(id);
+                addXP(5, `save_${id}`, "Đã lưu vào Sổ tay công thức");
+            }
+            document.getElementById('saved-count').innerText = savedFormulas.size;
+            renderFormulas();
+        }
+
+        function copyFormulaText(text) {
+            navigator.clipboard.writeText(text);
+            showToast("Đã sao chép công thức: " + text);
+        }
+
+        function renderFormulas() {
+            const query = document.getElementById('formula-search').value.toLowerCase().trim();
+            const grid = document.getElementById('formula-grid');
+
+            const filtered = formulasData.filter(item => {
+                const matchCategory = currentFormulaFilter === 'all'
+                    || (currentFormulaFilter === 'saved' && savedFormulas.has(item.id))
+                    || item.category === currentFormulaFilter;
+                const matchSearch = item.title.toLowerCase().includes(query)
+                    || item.formula.toLowerCase().includes(query)
+                    || item.note.toLowerCase().includes(query);
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-semibold">Không tìm thấy công thức phù hợp. Hãy thử từ khóa khác!</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isSaved = savedFormulas.has(item.id);
+                return `
+                    <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-md transition flex flex-col justify-between border border-slate-200/80 dark:border-slate-800">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-300">${item.category}</span>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="copyFormulaText('${item.formula}')" title="Sao chép công thức" class="p-1.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition">
+                                        <i class="fa-regular fa-copy text-xs"></i>
+                                    </button>
+                                    <button onclick="toggleSaveFormula(${item.id})" title="Lưu vào sổ tay" class="p-1.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800 ${isSaved ? 'text-amber-500' : 'text-slate-400'} transition">
+                                        <i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-bookmark text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-base text-slate-800 dark:text-slate-100">${item.title}</h3>
+                            <div class="math-font text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-slate-800/90 p-3 rounded-xl my-3 border border-indigo-100 dark:border-slate-700">
+                                ${item.formula}
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>${item.note}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 6. INTERACTIVE QUIZ ARENA
+        // ==========================================
+        const quizQuestions = [
+            {
+                q: "Câu 1: Đỉnh I của đồ thị hàm số bậc hai y = x² - 4x + 3 có tọa độ là:",
+                options: ["I(2; -1)", "I(-2; 15)", "I(4; 3)", "I(2; 1)"],
+                correct: 0,
+                explain: "Hoành độ đỉnh x_I = -b/(2a) = 4/(2·1) = 2. Thay x = 2 vào hàm số ta được y_I = 2² - 4·2 + 3 = -1. Vậy I(2; -1)."
+            },
+            {
+                q: "Câu 2: Cho tam giác ABC có b = 6, c = 8 và góc A = 60°. Độ dài cạnh a bằng bao nhiêu?",
+                options: ["a = 10", "a = 2√13", "a = √148", "a = 7"],
+                correct: 1,
+                explain: "Áp dụng Định lý Cosin: a² = b² + c² - 2bc·cos60° = 36 + 64 - 2·6·8·(0.5) = 52 ⇒ a = √52 = 2√13."
+            },
+            {
+                q: "Câu 3: Trong mặt phẳng Oxy, đường thẳng d: 3x - 4y + 5 = 0 có một vectơ pháp tuyến là:",
+                options: ["n⃗ = (4; 3)", "n⃗ = (3; 4)", "n⃗ = (3; -4)", "n⃗ = (-4; 3)"],
+                correct: 2,
+                explain: "Phương trình tổng quát ax + by + c = 0 có vectơ pháp tuyến n⃗ = (a; b) = (3; -4)."
+            },
+            {
+                q: "Câu 4: Tam thức bậc hai f(x) = -x² + 5x - 6 nhận giá trị DƯƠNG (f(x) > 0) khi và chỉ khi:",
+                options: ["x ∈ (-∞; 2) ∪ (3; +∞)", "x ∈ (2; 3)", "x ∈ [2; 3]", "x ∈ (-3; -2)"],
+                correct: 1,
+                explain: "f(x) = 0 có 2 nghiệm x = 2 và x = 3. Hệ số a = -1 < 0 nên theo quy tắc 'Trong trái, ngoài cùng', trong khoảng (2; 3) thì f(x) mang dấu dương (+)."
+            },
+            {
+                q: "Câu 5: Gieo một con xúc xắc cân đối và đồng chất 1 lần. Xác suất để xuất hiện mặt có số chấm là số nguyên tố bằng:",
+                options: ["1/6", "1/3", "1/2", "2/3"],
+                correct: 2,
+                explain: "Không gian mẫu n(Ω) = 6. Các mặt là số nguyên tố gồm {2, 3, 5} nên n(A) = 3. Vậy P(A) = 3/6 = 1/2."
+            }
+        ];
+
+        let userAnswers = {};
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            let score = 0;
+            Object.keys(userAnswers).forEach(idx => {
+                if (userAnswers[idx] === quizQuestions[idx].correct) score++;
+            });
+            document.getElementById('quiz-score').innerText = score;
+
+            container.innerHTML = quizQuestions.map((item, qIdx) => {
+                const answered = userAnswers[qIdx] !== undefined;
+                return `
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+                        <h3 class="font-bold text-base">${item.q}</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            ${item.options.map((opt, oIdx) => {
+                                let btnStyle = "bg-white dark:bg-slate-800 hover:border-indigo-500 border-slate-200 dark:border-slate-700";
+                                if (answered) {
+                                    if (oIdx === item.correct) {
+                                        btnStyle = "bg-emerald-100 dark:bg-emerald-950/80 border-emerald-500 text-emerald-800 dark:text-emerald-300 font-bold";
+                                    } else if (userAnswers[qIdx] === oIdx) {
+                                        btnStyle = "bg-rose-100 dark:bg-rose-950/80 border-rose-500 text-rose-800 dark:text-rose-300";
+                                    }
+                                }
+                                return `
+                                    <button onclick="answerQuiz(${qIdx}, ${oIdx})" ${answered ? 'disabled' : ''} class="text-left px-4 py-3 rounded-xl border text-sm transition math-font ${btnStyle}">
+                                        ${opt}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                        ${answered ? `
+                            <div class="p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 text-xs text-slate-700 dark:text-slate-300 border border-indigo-200 dark:border-indigo-900">
+                                <strong class="text-indigo-600 dark:text-indigo-400"><i class="fa-solid fa-graduation-cap mr-1"></i>Giải thích chi tiết:</strong> ${item.explain}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function answerQuiz(qIdx, oIdx) {
+            if (userAnswers[qIdx] !== undefined) return;
+            userAnswers[qIdx] = oIdx;
+            if (oIdx === quizQuestions[qIdx].correct) {
+                addXP(10, `quiz_${qIdx}`, "Trả lời chính xác!");
+                triggerConfetti();
+            } else {
+                showToast("Chưa chính xác! Hãy xem lời giải bên dưới nhé.");
+            }
+            renderQuiz();
+        }
+
+        function restartQuiz() {
+            userAnswers = {};
+            renderQuiz();
+            showToast("Đã làm mới Đấu trường Trắc nghiệm!");
+        }
+
+        // ==========================================
+        // 7. DAILY MYSTERY GIFT MODAL
+        // ==========================================
+        const dailyGifts = [
+            {
+                title: "Thần Chú Xét Dấu Tam Thức Bậc Hai",
+                content: "Khi Δ > 0, tam thức f(x) = ax² + bx + c tuân theo quy tắc 'TRONG TRÁI - NGOÀI CÙNG': Trong khoảng 2 nghiệm (x₁; x₂) thì f(x) trái dấu với hệ số a; ngoài khoảng 2 nghiệm thì f(x) cùng dấu với hệ số a!"
+            },
+            {
+                title: "Bí Mật Cầu Vòm Parabol Trong Kiến Trúc",
+                content: "Mọi cây cầu vòm hoặc cổng Parabol đều có phương trình dạng y = ax² + c (khi chọn trục Oy là trục đối xứng đi qua đỉnh vòm). Nhờ đó kỹ sư tính được chính xác chiều cao từng trụ đỡ!"
+            },
+            {
+                title: "Mẹo Nhớ Định Lý Cosin Từ Định Lý Pythagore",
+                content: "Định lý Cosin a² = b² + c² - 2bc·cosA thực chất là Định lý Pythagore mở rộng! Khi góc A = 90°, cos90° = 0 nên công thức rút gọn ngay về a² = b² + c²."
+            }
+        ];
+
+        function openDailyGift() {
+            const gift = dailyGifts[Math.floor(Math.random() * dailyGifts.length)];
+            document.getElementById('gift-title').innerText = gift.title;
+            document.getElementById('gift-content').innerText = gift.content;
+            const modal = document.getElementById('gift-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            triggerConfetti();
+            addXP(10, 'daily_gift', 'Đã mở Hộp quà Toán học hôm nay');
+        }
+
+        function closeDailyGift() {
+            const modal = document.getElementById('gift-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // ==========================================
+        // INITIALIZE ALL MODULES ON LOAD
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            updateParabola();
+            solveQuadraticTool();
+            solveTriangleTool();
+            solveSetsTool();
+            renderFlipCards();
+            renderFormulas();
+            renderQuiz();
+        });
+    </script>
+</body>
+</html>
